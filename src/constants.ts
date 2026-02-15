@@ -9,7 +9,7 @@ import chalk from 'chalk';
 import { validateQueueAndDeliverable, type VulnType } from './queue-validation.js';
 import type { AgentName, PromptName, PlaywrightAgent, AgentValidator } from './types/agents.js';
 
-// Factory function for vulnerability queue validators
+// 漏洞佇列驗證器的工廠函式
 function createVulnValidator(vulnType: VulnType): AgentValidator {
   return async (sourceDir: string): Promise<boolean> => {
     try {
@@ -23,7 +23,7 @@ function createVulnValidator(vulnType: VulnType): AgentValidator {
   };
 }
 
-// Factory function for exploit deliverable validators
+// 利用交付成果驗證器的工廠函式
 function createExploitValidator(vulnType: VulnType): AgentValidator {
   return async (sourceDir: string): Promise<boolean> => {
     const evidenceFile = path.join(sourceDir, 'deliverables', `${vulnType}_exploitation_evidence.md`);
@@ -31,65 +31,65 @@ function createExploitValidator(vulnType: VulnType): AgentValidator {
   };
 }
 
-// MCP agent mapping - assigns each agent to a specific Playwright instance to prevent conflicts
+// MCP 代理映射 - 將每個代理分配給特定的 Playwright 實例以防止衝突
 export const MCP_AGENT_MAPPING: Record<PromptName, PlaywrightAgent> = Object.freeze({
-  // Phase 1: Pre-reconnaissance (actual prompt name is 'pre-recon-code')
-  // NOTE: Pre-recon is pure code analysis and doesn't use browser automation,
-  // but assigning MCP server anyway for consistency and future extensibility
+  // 階段 1：預偵察（實際提示名稱為 'pre-recon-code'）
+  // 注意：預偵察是純程式碼分析，不使用瀏覽器自動化，
+  // 但為了一致性和未來擴展性，仍然分配 MCP 伺服器
   'pre-recon-code': 'playwright-agent1',
 
-  // Phase 2: Reconnaissance (actual prompt name is 'recon')
+  // 階段 2：偵察（實際提示名稱為 'recon'）
   recon: 'playwright-agent2',
 
-  // Phase 3: Vulnerability Analysis (5 parallel agents)
+  // 階段 3：漏洞分析（5 個並行代理）
   'vuln-injection': 'playwright-agent1',
   'vuln-xss': 'playwright-agent2',
   'vuln-auth': 'playwright-agent3',
   'vuln-ssrf': 'playwright-agent4',
   'vuln-authz': 'playwright-agent5',
 
-  // Phase 4: Exploitation (5 parallel agents - same as vuln counterparts)
+  // 階段 4：利用（5 個並行代理 - 與漏洞對應代理相同）
   'exploit-injection': 'playwright-agent1',
   'exploit-xss': 'playwright-agent2',
   'exploit-auth': 'playwright-agent3',
   'exploit-ssrf': 'playwright-agent4',
   'exploit-authz': 'playwright-agent5',
 
-  // Phase 5: Reporting (actual prompt name is 'report-executive')
-  // NOTE: Report generation is typically text-based and doesn't use browser automation,
-  // but assigning MCP server anyway for potential screenshot inclusion or future needs
+  // 階段 5：報告（實際提示名稱為 'report-executive'）
+  // 注意：報告生成通常基於文字且不使用瀏覽器自動化，
+  // 但為了潛在的截圖包含或未來需求，仍然分配 MCP 伺服器
   'report-executive': 'playwright-agent3',
 });
 
-// Direct agent-to-validator mapping - much simpler than pattern matching
+// 直接的代理到驗證器映射 - 比模式匹配簡單得多
 export const AGENT_VALIDATORS: Record<AgentName, AgentValidator> = Object.freeze({
-  // Pre-reconnaissance agent - validates the code analysis deliverable created by the agent
+  // 預偵察代理 - 驗證代理建立的程式碼分析交付成果
   'pre-recon': async (sourceDir: string): Promise<boolean> => {
     const codeAnalysisFile = path.join(sourceDir, 'deliverables', 'code_analysis_deliverable.md');
     return await fs.pathExists(codeAnalysisFile);
   },
 
-  // Reconnaissance agent
+  // 偵察代理
   recon: async (sourceDir: string): Promise<boolean> => {
     const reconFile = path.join(sourceDir, 'deliverables', 'recon_deliverable.md');
     return await fs.pathExists(reconFile);
   },
 
-  // Vulnerability analysis agents
+  // 漏洞分析代理
   'injection-vuln': createVulnValidator('injection'),
   'xss-vuln': createVulnValidator('xss'),
   'auth-vuln': createVulnValidator('auth'),
   'ssrf-vuln': createVulnValidator('ssrf'),
   'authz-vuln': createVulnValidator('authz'),
 
-  // Exploitation agents
+  // 利用代理
   'injection-exploit': createExploitValidator('injection'),
   'xss-exploit': createExploitValidator('xss'),
   'auth-exploit': createExploitValidator('auth'),
   'ssrf-exploit': createExploitValidator('ssrf'),
   'authz-exploit': createExploitValidator('authz'),
 
-  // Executive report agent
+  // 執行報告代理
   report: async (sourceDir: string): Promise<boolean> => {
     const reportFile = path.join(
       sourceDir,

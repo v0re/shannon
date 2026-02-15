@@ -5,22 +5,22 @@
 // as published by the Free Software Foundation.
 
 /**
- * Temporal workflow for Shannon pentest pipeline.
+ * Shannon 渗透測試管線的 Temporal 工作流程。
  *
- * Orchestrates the penetration testing workflow:
- * 1. Pre-Reconnaissance (sequential)
- * 2. Reconnaissance (sequential)
- * 3-4. Vulnerability + Exploitation (5 pipelined pairs in parallel)
- *      Each pair: vuln agent → queue check → conditional exploit
- *      No synchronization barrier - exploits start when their vuln finishes
- * 5. Reporting (sequential)
+ * 編排渗透測試工作流程：
+ * 1. 預偵察（順序）
+ * 2. 偵察（順序）
+ * 3-4. 漏洞 + 利用5 個並行的管線對）
+ *      每個對：漏洞代理 → 佇列檢查 → 條件式利用
+ *      無同步屏障 - 當漏洞完成時利用即開始
+ * 5. 報告（順序）
  *
- * Features:
- * - Queryable state via getProgress
- * - Automatic retry with backoff for transient/billing errors
- * - Non-retryable classification for permanent errors
- * - Audit correlation via workflowId
- * - Graceful failure handling: pipelines continue if one fails
+ * 功能：
+ * - 透過 getProgress 查詢狀態
+ * - 對暫時/計費錯誤自動重試並退避
+ * - 對永久性錯誤進行不可重試分類
+ * - 透過 workflowId 進行審計關聯
+ * - 優雅的失敗處理：如果一個失敗，管線繼續執行
  */
 
 import {
@@ -41,7 +41,7 @@ import {
 } from './shared.js';
 import type { VulnType } from '../queue-validation.js';
 
-// Retry configuration for production (long intervals for billing recovery)
+// 生產環境的重試配置（用於計費恢復的長間隔）
 const PRODUCTION_RETRY = {
   initialInterval: '5 minutes',
   maximumInterval: '30 minutes',
@@ -58,7 +58,7 @@ const PRODUCTION_RETRY = {
   ],
 };
 
-// Retry configuration for pipeline testing (fast iteration)
+// 管線測試的重試配置（快速迭代）
 const TESTING_RETRY = {
   initialInterval: '10 seconds',
   maximumInterval: '30 seconds',
@@ -67,14 +67,14 @@ const TESTING_RETRY = {
   nonRetryableErrorTypes: PRODUCTION_RETRY.nonRetryableErrorTypes,
 };
 
-// Activity proxy with production retry configuration (default)
+// 具有生產環境重試配置的活動代理（預設）
 const acts = proxyActivities<typeof activities>({
   startToCloseTimeout: '2 hours',
   heartbeatTimeout: '60 minutes', // Extended for sub-agent execution (SDK blocks event loop during Task tool calls)
   retry: PRODUCTION_RETRY,
 });
 
-// Activity proxy with testing retry configuration (fast)
+// 具有測試重試配置的活動代理（快速）
 const testActs = proxyActivities<typeof activities>({
   startToCloseTimeout: '30 minutes',
   heartbeatTimeout: '30 minutes', // Extended for sub-agent execution in testing
@@ -82,8 +82,8 @@ const testActs = proxyActivities<typeof activities>({
 });
 
 /**
- * Compute aggregated metrics from the current pipeline state.
- * Called on both success and failure to provide partial metrics.
+ * 從當前管線狀態計算聚合指標。
+ * 在成功和失敗時都會呼叫以提供部分指標。
  */
 function computeSummary(state: PipelineState): PipelineSummary {
   const metrics = Object.values(state.agentMetrics);

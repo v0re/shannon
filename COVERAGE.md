@@ -1,158 +1,158 @@
-# Coverage and Roadmap
+# 覆蓋範圍與路線圖
 
-A Web Security Testing (WST) checklist is a comprehensive guide that systematically outlines security tests for web applications, covering areas like information gathering, authentication, session management, input validation, and error handling to identify and mitigate vulnerabilities.
+網路安全測試（WST）檢查清單是一份全面的指南，系統性地概述了網路應用程式的安全測試，涵蓋資訊收集、身份驗證、工作階段管理、輸入驗證和錯誤處理等領域，以識別和減輕漏洞。
 
-The checklist below highlights the specific WST categories and items that our product consistently and reliably addresses. While Shannon's dynamic detection often extends to other areas, we believe in transparency and have only checked the vulnerabilities we are designed to consistently catch. **Our coverage is strategically focused on the WST controls that are applicable to today's Web App technology stacks.**
+下面的檢查清單突出顯示了我們的產品持續且可靠地解決的特定 WST 類別和項目。雖然 Shannon 的動態檢測通常會擴展到其他領域，但我們相信透明度，因此只勾選了我們設計用於持續捕獲的漏洞。**我們的覆蓋範圍策略性地專注於適用於當今網路應用程式技術堆疊的 WST 控制項。**
 
-We are actively working to expand this coverage to provide an even more comprehensive security solution for modern web applications.
+我們正在積極努力擴大此覆蓋範圍，為現代網路應用程式提供更全面的安全解決方案。
 
-## Current Coverage
+## 目前覆蓋範圍
 
-Shannon currently targets the following classes of *exploitable* vulnerabilities:
-- Broken Authentication & Authorization
-- SQL Injection (SQLi)
-- Command Injection
-- Cross-Site Scripting (XSS)
-- Server-Side Request Forgery (SSRF)
+Shannon 目前針對以下*可利用*漏洞類別：
+- 身份驗證與授權破壞
+- SQL 注入（SQLi）
+- 命令注入
+- 跨站腳本攻擊（XSS）
+- 伺服器端請求偽造（SSRF）
 
-## What Shannon Does Not Cover
+## Shannon 不涵蓋的內容
 
-This list is not exhaustive of all potential security risks. Shannon does not, for example, report on issues that it cannot actively exploit, such as the use of vulnerable third-party libraries, weak encryption algorithms, or insecure configurations. These types of static-analysis findings are the focus of our upcoming **Keygraph Code Security (SAST)** product.
+此清單並非所有潛在安全風險的詳盡清單。例如，Shannon 不會報告無法主動利用的問題，例如使用易受攻擊的第三方程式庫、弱加密演算法或不安全的設定。這些類型的靜態分析發現是我們即將推出的 **Keygraph Code Security（SAST）** 產品的重點。
 
-## WST Testing Checklist
+## WST 測試檢查清單
 
-| Test ID | Test Name | Status |
+| 測試 ID | 測試名稱 | 狀態 |
 | --- | --- | --- |
-| **WSTG-INFO** | **Information Gathering** |  |
-| WSTG-INFO-01 | Conduct Search Engine Discovery and Reconnaissance for Information Leakage |  |
-| WSTG-INFO-02 | Fingerprint Web Server | ✅ |
-| WSTG-INFO-03 | Review Webserver Metafiles for Information Leakage |  |
-| WSTG-INFO-04 | Enumerate Applications on Webserver |  |
-| WSTG-INFO-05 | Review Webpage Content for Information Leakage |  |
-| WSTG-INFO-06 | Identify Application Entry Points | ✅ |
-| WSTG-INFO-07 | Map Execution Paths Through Application | ✅ |
-| WSTG-INFO-08 | Fingerprint Web Application Framework | ✅ |
-| WSTG-INFO-09 | Fingerprint Web Application | ✅ |
-| WSTG-INFO-10 | Map Application Architecture | ✅ |
+| **WSTG-INFO** | **資訊收集** |  |
+| WSTG-INFO-01 | 進行搜尋引擎發現和偵察以查找資訊洩漏 |  |
+| WSTG-INFO-02 | 指紋識別網路伺服器 | ✅ |
+| WSTG-INFO-03 | 檢查網路伺服器中繼檔案以查找資訊洩漏 |  |
+| WSTG-INFO-04 | 列舉網路伺服器上的應用程式 |  |
+| WSTG-INFO-05 | 檢查網頁內容以查找資訊洩漏 |  |
+| WSTG-INFO-06 | 識別應用程式入口點 | ✅ |
+| WSTG-INFO-07 | 映射應用程式的執行路徑 | ✅ |
+| WSTG-INFO-08 | 指紋識別網路應用程式框架 | ✅ |
+| WSTG-INFO-09 | 指紋識別網路應用程式 | ✅ |
+| WSTG-INFO-10 | 映射應用程式架構 | ✅ |
 |  |  |  |
-| **WSTG-CONF** | **Configuration and Deploy Management Testing** |  |
-| WSTG-CONF-01 | Test Network Infrastructure Configuration | ✅ |
-| WSTG-CONF-02 | Test Application Platform Configuration |  |
-| WSTG-CONF-03 | Test File Extensions Handling for Sensitive Information |  |
-| WSTG-CONF-04 | Review Old Backup and Unreferenced Files for Sensitive Information |  |
-| WSTG-CONF-05 | Enumerate Infrastructure and Application Admin Interfaces |  |
-| WSTG-CONF-06 | Test HTTP Methods |  |
-| WSTG-CONF-07 | Test HTTP Strict Transport Security |  |
-| WSTG-CONF-08 | Test RIA Cross Domain Policy |  |
-| WSTG-CONF-09 | Test File Permission |  |
-| WSTG-CONF-10 | Test for Subdomain Takeover | ✅ |
-| WSTG-CONF-11 | Test Cloud Storage |  |
-| WSTG-CONF-12 | Testing for Content Security Policy |  |
-| WSTG-CONF-13 | Test Path Confusion |  |
-| WSTG-CONF-14 | Test Other HTTP Security Header Misconfigurations |  |
+| **WSTG-CONF** | **配置和部署管理測試** |  |
+| WSTG-CONF-01 | 測試網路基礎設施配置 | ✅ |
+| WSTG-CONF-02 | 測試應用程式平台配置 |  |
+| WSTG-CONF-03 | 測試敏感資訊的檔案副檔名處理 |  |
+| WSTG-CONF-04 | 檢查舊備份和未引用的檔案以查找敏感資訊 |  |
+| WSTG-CONF-05 | 列舉基礎設施和應用程式管理介面 |  |
+| WSTG-CONF-06 | 測試 HTTP 方法 |  |
+| WSTG-CONF-07 | 測試 HTTP 嚴格傳輸安全 |  |
+| WSTG-CONF-08 | 測試 RIA 跨域策略 |  |
+| WSTG-CONF-09 | 測試檔案權限 |  |
+| WSTG-CONF-10 | 測試子域接管 | ✅ |
+| WSTG-CONF-11 | 測試雲端儲存 |  |
+| WSTG-CONF-12 | 測試內容安全策略 |  |
+| WSTG-CONF-13 | 測試路徑混淆 |  |
+| WSTG-CONF-14 | 測試其他 HTTP 安全標頭錯誤配置 |  |
 |  |  |  |
-| **WSTG-IDNT** | **Identity Management Testing** |  |
-| WSTG-IDNT-01 | Test Role Definitions | ✅ |
-| WSTG-IDNT-02 | Test User Registration Process | ✅ |
-| WSTG-IDNT-03 | Test Account Provisioning Process | ✅ |
-| WSTG-IDNT-04 | Testing for Account Enumeration and Guessable User Account | ✅ |
-| WSTG-IDNT-05 | Testing for Weak or Unenforced Username Policy | ✅ |
+| **WSTG-IDNT** | **身份管理測試** |  |
+| WSTG-IDNT-01 | 測試角色定義 | ✅ |
+| WSTG-IDNT-02 | 測試使用者註冊流程 | ✅ |
+| WSTG-IDNT-03 | 測試帳戶佈建流程 | ✅ |
+| WSTG-IDNT-04 | 測試帳戶列舉和可猜測的使用者帳戶 | ✅ |
+| WSTG-IDNT-05 | 測試弱或未強制執行的使用者名稱策略 | ✅ |
 |  |  |  |
-| **WSTG-ATHN** | **Authentication Testing** |  |
-| WSTG-ATHN-01 | Testing for Credentials Transported over an Encrypted Channel | ✅ |
-| WSTG-ATHN-02 | Testing for Default Credentials | ✅ |
-| WSTG-ATHN-03 | Testing for Weak Lock Out Mechanism | ✅ |
-| WSTG-ATHN-04 | Testing for Bypassing Authentication Schema | ✅ |
-| WSTG-ATHN-05 | Testing for Vulnerable Remember Password |  |
-| WSTG-ATHN-06 | Testing for Browser Cache Weakness |  |
-| WSTG-ATHN-07 | Testing for Weak Password Policy | ✅ |
-| WSTG-ATHN-08 | Testing for Weak Security Question Answer | ✅ |
-| WSTG-ATHN-09 | Testing for Weak Password Change or Reset Functionalities | ✅ |
-| WSTG-ATHN-10 | Testing for Weaker Authentication in Alternative Channel | ✅ |
-| WSTG-ATHN-11 | Testing Multi-Factor Authentication (MFA) | ✅ |
+| **WSTG-ATHN** | **身份驗證測試** |  |
+| WSTG-ATHN-01 | 測試透過加密通道傳輸的憑證 | ✅ |
+| WSTG-ATHN-02 | 測試預設憑證 | ✅ |
+| WSTG-ATHN-03 | 測試弱鎖定機制 | ✅ |
+| WSTG-ATHN-04 | 測試繞過身份驗證架構 | ✅ |
+| WSTG-ATHN-05 | 測試易受攻擊的記住密碼 |  |
+| WSTG-ATHN-06 | 測試瀏覽器快取弱點 |  |
+| WSTG-ATHN-07 | 測試弱密碼策略 | ✅ |
+| WSTG-ATHN-08 | 測試弱安全問題答案 | ✅ |
+| WSTG-ATHN-09 | 測試弱密碼變更或重設功能 | ✅ |
+| WSTG-ATHN-10 | 測試替代通道中較弱的身份驗證 | ✅ |
+| WSTG-ATHN-11 | 測試多因素身份驗證（MFA） | ✅ |
 |  |  |  |
-| **WSTG-ATHZ** | **Authorization Testing** |  |
-| WSTG-ATHZ-01 | Testing Directory Traversal File Include | ✅ |
-| WSTG-ATHZ-02 | Testing for Bypassing Authorization Schema | ✅ |
-| WSTG-ATHZ-03 | Testing for Privilege Escalation | ✅ |
-| WSTG-ATHZ-04 | Testing for Insecure Direct Object References | ✅ |
-| WSTG-ATHZ-05 | Testing for OAuth Weaknesses | ✅ |
+| **WSTG-ATHZ** | **授權測試** |  |
+| WSTG-ATHZ-01 | 測試目錄遍歷檔案包含 | ✅ |
+| WSTG-ATHZ-02 | 測試繞過授權架構 | ✅ |
+| WSTG-ATHZ-03 | 測試權限提升 | ✅ |
+| WSTG-ATHZ-04 | 測試不安全的直接物件引用 | ✅ |
+| WSTG-ATHZ-05 | 測試 OAuth 弱點 | ✅ |
 |  |  |  |
-| **WSTG-SESS** | **Session Management Testing** |  |
-| WSTG-SESS-01 | Testing for Session Management Schema | ✅ |
-| WSTG-SESS-02 | Testing for Cookies Attributes | ✅ |
-| WSTG-SESS-03 | Testing for Session Fixation | ✅ |
-| WSTG-SESS-04 | Testing for Exposed Session Variables |  |
-| WSTG-SESS-05 | Testing for Cross Site Request Forgery | ✅ |
-| WSTG-SESS-06 | Testing for Logout Functionality | ✅ |
-| WSTG-SESS-07 | Testing Session Timeout | ✅ |
-| WSTG-SESS-08 | Testing for Session Puzzling |  |
-| WSTG-SESS-09 | Testing for Session Hijacking |  |
-| WSTG-SESS-10 | Testing JSON Web Tokens | ✅ |
-| WSTG-SESS-11 | Testing for Concurrent Sessions |  |
+| **WSTG-SESS** | **工作階段管理測試** |  |
+| WSTG-SESS-01 | 測試工作階段管理架構 | ✅ |
+| WSTG-SESS-02 | 測試 Cookie 屬性 | ✅ |
+| WSTG-SESS-03 | 測試工作階段固定 | ✅ |
+| WSTG-SESS-04 | 測試暴露的工作階段變數 |  |
+| WSTG-SESS-05 | 測試跨站請求偽造 | ✅ |
+| WSTG-SESS-06 | 測試登出功能 | ✅ |
+| WSTG-SESS-07 | 測試工作階段逾時 | ✅ |
+| WSTG-SESS-08 | 測試工作階段謎題 |  |
+| WSTG-SESS-09 | 測試工作階段劫持 |  |
+| WSTG-SESS-10 | 測試 JSON Web Token | ✅ |
+| WSTG-SESS-11 | 測試並發工作階段 |  |
 |  |  |  |
-| **WSTG-INPV** | **Input Validation Testing** |  |
-| WSTG-INPV-01 | Testing for Reflected Cross Site Scripting | ✅ |
-| WSTG-INPV-02 | Testing for Stored Cross Site Scripting | ✅ |
-| WSTG-INPV-03 | Testing for HTTP Verb Tampering |  |
-| WSTG-INPV-04 | Testing for HTTP Parameter pollution |  |
-| WSTG-INPV-05 | Testing for SQL Injection | ✅ |
-| WSTG-INPV-06 | Testing for LDAP Injection |  |
-| WSTG-INPV-07 | Testing for XML Injection |  |
-| WSTG-INPV-08 | Testing for SSI Injection |  |
-| WSTG-INPV-09 | Testing for XPath Injection |  |
-| WSTG-INPV-10 | Testing for IMAP SMTP Injection |  |
-| WSTG-INPV-11 | Testing for Code Injection | ✅ |
-| WSTG-INPV-12 | Testing for Command Injection | ✅ |
-| WSTG-INPV-13 | Testing for Format String Injection |  |
-| WSTG-INPV-14 | Testing for Incubated Vulnerabilities |  |
-| WSTG-INPV-15 | Testing for HTTP Splitting Smuggling |  |
-| WSTG-INPV-16 | Testing for HTTP Incoming Requests |  |
-| WSTG-INPV-17 | Testing for Host Header Injection |  |
-| WSTG-INPV-18 | Testing for Server-Side Template Injection | ✅ |
-| WSTG-INPV-19 | Testing for Server-Side Request Forgery | ✅ |
-| WSTG-INPV-20 | Testing for Mass Assignment |  |
+| **WSTG-INPV** | **輸入驗證測試** |  |
+| WSTG-INPV-01 | 測試反射型跨站腳本攻擊 | ✅ |
+| WSTG-INPV-02 | 測試儲存型跨站腳本攻擊 | ✅ |
+| WSTG-INPV-03 | 測試 HTTP 動詞篡改 |  |
+| WSTG-INPV-04 | 測試 HTTP 參數污染 |  |
+| WSTG-INPV-05 | 測試 SQL 注入 | ✅ |
+| WSTG-INPV-06 | 測試 LDAP 注入 |  |
+| WSTG-INPV-07 | 測試 XML 注入 |  |
+| WSTG-INPV-08 | 測試 SSI 注入 |  |
+| WSTG-INPV-09 | 測試 XPath 注入 |  |
+| WSTG-INPV-10 | 測試 IMAP SMTP 注入 |  |
+| WSTG-INPV-11 | 測試程式碼注入 | ✅ |
+| WSTG-INPV-12 | 測試命令注入 | ✅ |
+| WSTG-INPV-13 | 測試格式字串注入 |  |
+| WSTG-INPV-14 | 測試潛伏漏洞 |  |
+| WSTG-INPV-15 | 測試 HTTP 分割走私 |  |
+| WSTG-INPV-16 | 測試 HTTP 傳入請求 |  |
+| WSTG-INPV-17 | 測試主機標頭注入 |  |
+| WSTG-INPV-18 | 測試伺服器端範本注入 | ✅ |
+| WSTG-INPV-19 | 測試伺服器端請求偽造 | ✅ |
+| WSTG-INPV-20 | 測試大量賦值 |  |
 |  |  |  |
-| **WSTG-ERRH** | **Error Handling** |  |
-| WSTG-ERRH-01 | Testing for Improper Error Handling |  |
-| WSTG-ERRH-02 | Testing for Stack Traces |  |
+| **WSTG-ERRH** | **錯誤處理** |  |
+| WSTG-ERRH-01 | 測試不當錯誤處理 |  |
+| WSTG-ERRH-02 | 測試堆疊追蹤 |  |
 |  |  |  |
-| **WSTG-CRYP** | **Cryptography** |  |
-| WSTG-CRYP-01 | Testing for Weak Transport Layer Security | ✅ |
-| WSTG-CRYP-02 | Testing for Padding Oracle |  |
-| WSTG-CRYP-03 | Testing for Sensitive Information Sent Via Unencrypted Channels | ✅ |
-| WSTG-CRYP-04 | Testing for Weak Encryption |  |
+| **WSTG-CRYP** | **密碼學** |  |
+| WSTG-CRYP-01 | 測試弱傳輸層安全 | ✅ |
+| WSTG-CRYP-02 | 測試填充預言機 |  |
+| WSTG-CRYP-03 | 測試透過未加密通道發送的敏感資訊 | ✅ |
+| WSTG-CRYP-04 | 測試弱加密 |  |
 |  |  |  |
-| **WSTG-BUSLOGIC** | **Business Logic Testing** |  |
-| WSTG-BUSL-01 | Test Business Logic Data Validation |  |
-| WSTG-BUSL-02 | Test Ability to Forge Requests |  |
-| WSTG-BUSL-03 | Test Integrity Checks |  |
-| WSTG-BUSL-04 | Test for Process Timing |  |
-| WSTG-BUSL-05 | Test Number of Times a Function Can Be Used Limits |  |
-| WSTG-BUSL-06 | Testing for the Circumvention of Work Flows |  |
-| WSTG-BUSL-07 | Test Defenses Against Application Misuse |  |
-| WSTG-BUSL-08 | Test Upload of Unexpected File Types |  |
-| WSTG-BUSL-09 | Test Upload of Malicious Files |  |
-| WSTG-BUSL-10 | Test Payment Functionality |  |
+| **WSTG-BUSLOGIC** | **業務邏輯測試** |  |
+| WSTG-BUSL-01 | 測試業務邏輯資料驗證 |  |
+| WSTG-BUSL-02 | 測試偽造請求的能力 |  |
+| WSTG-BUSL-03 | 測試完整性檢查 |  |
+| WSTG-BUSL-04 | 測試流程時序 |  |
+| WSTG-BUSL-05 | 測試功能可使用次數限制 |  |
+| WSTG-BUSL-06 | 測試工作流程的規避 |  |
+| WSTG-BUSL-07 | 測試針對應用程式濫用的防禦 |  |
+| WSTG-BUSL-08 | 測試上傳意外檔案類型 |  |
+| WSTG-BUSL-09 | 測試上傳惡意檔案 |  |
+| WSTG-BUSL-10 | 測試支付功能 |  |
 |  |  |  |
-| **WSTG-CLIENT** | **Client-side Testing** |  |
-| WSTG-CLNT-01 | Testing for DOM Based Cross Site Scripting | ✅ |
-| WSTG-CLNT-02 | Testing for JavaScript Execution | ✅ |
-| WSTG-CLNT-03 | Testing for HTML Injection | ✅ |
-| WSTG-CLNT-04 | Testing for Client-Side URL Redirect | ✅ |
-| WSTG-CLNT-05 | Testing for CSS Injection |  |
-| WSTG-CLNT-06 | Testing for Client-Side Resource Manipulation |  |
-| WSTG-CLNT-07 | Test Cross Origin Resource Sharing |  |
-| WSTG-CLNT-08 | Testing for Cross Site Flashing |  |
-| WSTG-CLNT-09 | Testing for Clickjacking |  |
-| WSTG-CLNT-10 | Testing WebSockets |  |
-| WSTG-CLNT-11 | Test Web Messaging |  |
-| WSTG-CLNT-12 | Test Browser Storage | ✅ |
-| WSTG-CLNT-13 | Testing for Cross Site Script Inclusion | ✅ |
-| WSTG-CLNT-14 | Testing for Reverse Tabnabbing |  |
+| **WSTG-CLIENT** | **客戶端測試** |  |
+| WSTG-CLNT-01 | 測試基於 DOM 的跨站腳本攻擊 | ✅ |
+| WSTG-CLNT-02 | 測試 JavaScript 執行 | ✅ |
+| WSTG-CLNT-03 | 測試 HTML 注入 | ✅ |
+| WSTG-CLNT-04 | 測試客戶端 URL 重定向 | ✅ |
+| WSTG-CLNT-05 | 測試 CSS 注入 |  |
+| WSTG-CLNT-06 | 測試客戶端資源操作 |  |
+| WSTG-CLNT-07 | 測試跨源資源共享 |  |
+| WSTG-CLNT-08 | 測試跨站 Flash |  |
+| WSTG-CLNT-09 | 測試點擊劫持 |  |
+| WSTG-CLNT-10 | 測試 WebSocket |  |
+| WSTG-CLNT-11 | 測試網路訊息傳遞 |  |
+| WSTG-CLNT-12 | 測試瀏覽器儲存 | ✅ |
+| WSTG-CLNT-13 | 測試跨站腳本包含 | ✅ |
+| WSTG-CLNT-14 | 測試反向標籤劫持 |  |
 |  |  |  |
-| **WSTG-APIT** | **API Testing** |  |
-| WSTG-APIT-01 | API Reconnaissance | ✅ |
-| WSTG-APIT-02 | API Broken Object Level Authorization | ✅ |
-| WSTG-APIT-99 | Testing GraphQL | ✅ |
+| **WSTG-APIT** | **API 測試** |  |
+| WSTG-APIT-01 | API 偵察 | ✅ |
+| WSTG-APIT-02 | API 破壞物件級別授權 | ✅ |
+| WSTG-APIT-99 | 測試 GraphQL | ✅ |
 |  |  |  |

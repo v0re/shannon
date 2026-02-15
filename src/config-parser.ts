@@ -18,15 +18,15 @@ import type {
   DistributedConfig,
 } from './types/config.js';
 
-// Handle ESM/CJS interop for ajv-formats using require
+// 使用 require 處理 ajv-formats 的 ESM/CJS 互操作
 const require = createRequire(import.meta.url);
 const addFormats: FormatsPlugin = require('ajv-formats');
 
-// Initialize AJV with formats
+// 使用格式初始化 AJV
 const ajv = new Ajv({ allErrors: true, verbose: true });
 addFormats(ajv);
 
-// Load JSON Schema
+// 載入 JSON Schema
 let configSchema: object;
 let validateSchema: ValidateFunction;
 
@@ -45,24 +45,24 @@ try {
   );
 }
 
-// Security patterns to block
+// 要阻擋的安全模式
 const DANGEROUS_PATTERNS: RegExp[] = [
-  /\.\.\//, // Path traversal
-  /[<>]/, // HTML/XML injection
-  /javascript:/i, // JavaScript URLs
-  /data:/i, // Data URLs
-  /file:/i, // File URLs
+  /\.\.\//, // 路徑遍歷
+  /[<>]/, // HTML/XML 注入
+  /javascript:/i, // JavaScript URL
+  /data:/i, // 資料 URL
+  /file:/i, // 檔案 URL
 ];
 
-// Parse and load YAML configuration file with enhanced safety
+// 以增強的安全性解析和載入 YAML 配置檔案
 export const parseConfig = async (configPath: string): Promise<Config> => {
   try {
-    // File existence check
+    // 檔案存在檢查
     if (!(await fs.pathExists(configPath))) {
       throw new Error(`Configuration file not found: ${configPath}`);
     }
 
-    // File size check (prevent extremely large files)
+    // 檔案大小檢查（防止極大檔案）
     const stats = await fs.stat(configPath);
     const maxFileSize = 1024 * 1024; // 1MB
     if (stats.size > maxFileSize) {
@@ -71,10 +71,10 @@ export const parseConfig = async (configPath: string): Promise<Config> => {
       );
     }
 
-    // Read file content
+    // 讀取檔案內容
     const configContent = await fs.readFile(configPath, 'utf8');
 
-    // Basic content validation
+    // 基本內容驗證
     if (!configContent.trim()) {
       throw new Error('Configuration file is empty');
     }

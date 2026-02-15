@@ -4,7 +4,7 @@
 // it under the terms of the GNU Affero General Public License version 3
 // as published by the Free Software Foundation.
 
-// Null Object pattern for audit logging - callers never check for null
+// 審計日誌的空物件模式 - 呼叫者永遠不檢查 null
 
 import type { AuditSession } from '../audit/index.js';
 import { formatTimestamp } from '../utils/formatting.js';

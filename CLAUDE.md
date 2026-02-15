@@ -1,133 +1,133 @@
 # CLAUDE.md
 
-AI-powered penetration testing agent for defensive security analysis. Automates vulnerability assessment by combining reconnaissance tools with AI-powered code analysis.
+用於防禦性安全分析的 AI 驅動滲透測試代理。透過結合偵察工具與 AI 驅動的程式碼分析來自動化漏洞評估。
 
-## Commands
+## 命令
 
-**Prerequisites:** Docker, Anthropic API key in `.env`
+**前置需求：** Docker、`.env` 中的 Anthropic API 金鑰
 
 ```bash
-# Setup
-cp .env.example .env && edit .env  # Set ANTHROPIC_API_KEY
+# 設定
+cp .env.example .env && edit .env  # 設定 ANTHROPIC_API_KEY
 
-# Prepare repo (REPO is a folder name inside ./repos/, not an absolute path)
+# 準備儲存庫（REPO 是 ./repos/ 內的資料夾名稱，不是絕對路徑）
 git clone https://github.com/org/repo.git ./repos/my-repo
-# or symlink: ln -s /path/to/existing/repo ./repos/my-repo
+# 或符號連結：ln -s /path/to/existing/repo ./repos/my-repo
 
-# Run
+# 執行
 ./shannon start URL=<url> REPO=my-repo
 ./shannon start URL=<url> REPO=my-repo CONFIG=./configs/my-config.yaml
 
-# Monitor
-./shannon logs                      # Real-time worker logs
-./shannon query ID=<workflow-id>    # Query workflow progress
-# Temporal Web UI: http://localhost:8233
+# 監控
+./shannon logs                      # 即時工作者日誌
+./shannon query ID=<workflow-id>    # 查詢工作流程進度
+# Temporal Web UI：http://localhost:8233
 
-# Stop
-./shannon stop                      # Preserves workflow data
-./shannon stop CLEAN=true           # Full cleanup including volumes
+# 停止
+./shannon stop                      # 保留工作流程資料
+./shannon stop CLEAN=true           # 完全清理包括卷
 
-# Build
+# 建置
 npm run build
 ```
 
-**Options:** `CONFIG=<file>` (YAML config), `OUTPUT=<path>` (default: `./audit-logs/`), `PIPELINE_TESTING=true` (minimal prompts, 10s retries), `REBUILD=true` (force Docker rebuild), `ROUTER=true` (multi-model routing via [claude-code-router](https://github.com/musistudio/claude-code-router))
+**選項：** `CONFIG=<file>`（YAML 設定）、`OUTPUT=<path>`（預設：`./audit-logs/`）、`PIPELINE_TESTING=true`（最小提示、10 秒重試）、`REBUILD=true`（強制 Docker 重新建置）、`ROUTER=true`（透過 [claude-code-router](https://github.com/musistudio/claude-code-router) 進行多模型路由）
 
-## Architecture
+## 架構
 
-### Core Modules
-- `src/session-manager.ts` — Agent definitions, execution order, parallel groups
-- `src/ai/claude-executor.ts` — Claude Agent SDK integration with retry logic and git checkpoints
-- `src/config-parser.ts` — YAML config parsing with JSON Schema validation
-- `src/error-handling.ts` — Categorized error types (PentestError, ConfigError, NetworkError) with retry logic
-- `src/tool-checker.ts` — Validates external security tool availability before execution
-- `src/queue-validation.ts` — Deliverable validation and agent prerequisites
+### 核心模組
+- `src/session-manager.ts` — 代理定義、執行順序、並行群組
+- `src/ai/claude-executor.ts` — Claude Agent SDK 整合，具有重試邏輯和 git 檢查點
+- `src/config-parser.ts` — 使用 JSON Schema 驗證的 YAML 設定解析
+- `src/error-handling.ts` — 分類的錯誤類型（PentestError、ConfigError、NetworkError）與重試邏輯
+- `src/tool-checker.ts` — 在執行前驗證外部安全工具可用性
+- `src/queue-validation.ts` — 交付成果驗證和代理前置條件
 
-### Temporal Orchestration
-Durable workflow orchestration with crash recovery, queryable progress, intelligent retry, and parallel execution (5 concurrent agents in vuln/exploit phases).
+### Temporal 編排
+具有崩潰恢復、可查詢進度、智能重試和並行執行（漏洞/利用階段中 5 個並發代理）的持久工作流程編排。
 
-- `src/temporal/workflows.ts` — Main workflow (`pentestPipelineWorkflow`)
-- `src/temporal/activities.ts` — Activity implementations with heartbeats
-- `src/temporal/worker.ts` — Worker entry point
-- `src/temporal/client.ts` — CLI client for starting workflows
-- `src/temporal/shared.ts` — Types, interfaces, query definitions
-- `src/temporal/query.ts` — Query tool for progress inspection
+- `src/temporal/workflows.ts` — 主工作流程（`pentestPipelineWorkflow`）
+- `src/temporal/activities.ts` — 具有心跳的活動實作
+- `src/temporal/worker.ts` — 工作者入口點
+- `src/temporal/client.ts` — 用於啟動工作流程的 CLI 客戶端
+- `src/temporal/shared.ts` — 類型、介面、查詢定義
+- `src/temporal/query.ts` — 用於進度檢查的查詢工具
 
-### Five-Phase Pipeline
+### 五階段管線
 
-1. **Pre-Recon** (`pre-recon`) — External scans (nmap, subfinder, whatweb) + source code analysis
-2. **Recon** (`recon`) — Attack surface mapping from initial findings
-3. **Vulnerability Analysis** (5 parallel agents) — injection, xss, auth, authz, ssrf
-4. **Exploitation** (5 parallel agents, conditional) — Exploits confirmed vulnerabilities
-5. **Reporting** (`report`) — Executive-level security report
+1. **預偵察**（`pre-recon`）— 外部掃描（nmap、subfinder、whatweb）+ 原始碼分析
+2. **偵察**（`recon`）— 從初始發現映射攻擊面
+3. **漏洞分析**（5 個並行代理）— injection、xss、auth、authz、ssrf
+4. **利用**（5 個並行代理，條件式）— 利用已確認的漏洞
+5. **報告**（`report`）— 執行級別安全報告
 
-### Supporting Systems
-- **Configuration** — YAML configs in `configs/` with JSON Schema validation (`config-schema.json`). Supports auth settings, MFA/TOTP, and per-app testing parameters
-- **Prompts** — Per-phase templates in `prompts/` with variable substitution (`{{TARGET_URL}}`, `{{CONFIG_CONTEXT}}`). Shared partials in `prompts/shared/` via `prompt-manager.ts`
-- **SDK Integration** — Uses `@anthropic-ai/claude-agent-sdk` with `maxTurns: 10_000` and `bypassPermissions` mode. Playwright MCP for browser automation, TOTP generation via MCP tool. Login flow template at `prompts/shared/login-instructions.txt` supports form, SSO, API, and basic auth
-- **Audit System** — Crash-safe append-only logging in `audit-logs/{hostname}_{sessionId}/`. Tracks session metrics, per-agent logs, prompts, and deliverables
-- **Deliverables** — Saved to `deliverables/` in the target repo via the `save_deliverable` MCP tool
+### 支援系統
+- **配置** — `configs/` 中的 YAML 設定，使用 JSON Schema 驗證（`config-schema.json`）。支援身份驗證設定、MFA/TOTP 和每個應用程式的測試參數
+- **提示** — `prompts/` 中的每階段範本，具有變數替換（`{{TARGET_URL}}`、`{{CONFIG_CONTEXT}}`）。透過 `prompt-manager.ts` 在 `prompts/shared/` 中共享部分
+- **SDK 整合** — 使用 `@anthropic-ai/claude-agent-sdk`，具有 `maxTurns: 10_000` 和 `bypassPermissions` 模式。用於瀏覽器自動化的 Playwright MCP、透過 MCP 工具產生 TOTP。`prompts/shared/login-instructions.txt` 中的登入流程範本支援表單、SSO、API 和基本身份驗證
+- **審計系統** — `audit-logs/{hostname}_{sessionId}/` 中的崩潰安全僅附加日誌記錄。追蹤工作階段指標、每個代理日誌、提示和交付成果
+- **交付成果** — 透過 `save_deliverable` MCP 工具儲存到目標儲存庫中的 `deliverables/`
 
-## Development Notes
+## 開發注意事項
 
-### Adding a New Agent
-1. Define agent in `src/session-manager.ts` (add to `AGENT_QUEUE` and parallel group)
-2. Create prompt template in `prompts/` (e.g., `vuln-newtype.txt`)
-3. Add activity function in `src/temporal/activities.ts`
-4. Register activity in `src/temporal/workflows.ts` within the appropriate phase
+### 新增新代理
+1. 在 `src/session-manager.ts` 中定義代理（新增到 `AGENT_QUEUE` 和並行群組）
+2. 在 `prompts/` 中建立提示範本（例如，`vuln-newtype.txt`）
+3. 在 `src/temporal/activities.ts` 中新增活動函式
+4. 在適當階段的 `src/temporal/workflows.ts` 中註冊活動
 
-### Modifying Prompts
-- Variable substitution: `{{TARGET_URL}}`, `{{CONFIG_CONTEXT}}`, `{{LOGIN_INSTRUCTIONS}}`
-- Shared partials in `prompts/shared/` included via `prompt-manager.ts`
-- Test with `PIPELINE_TESTING=true` for fast iteration
+### 修改提示
+- 變數替換：`{{TARGET_URL}}`、`{{CONFIG_CONTEXT}}`、`{{LOGIN_INSTRUCTIONS}}`
+- 透過 `prompt-manager.ts` 包含 `prompts/shared/` 中的共享部分
+- 使用 `PIPELINE_TESTING=true` 進行快速迭代測試
 
-### Key Design Patterns
-- **Configuration-Driven** — YAML configs with JSON Schema validation
-- **Progressive Analysis** — Each phase builds on previous results
-- **SDK-First** — Claude Agent SDK handles autonomous analysis
-- **Modular Error Handling** — Categorized errors with automatic retry (3 attempts per agent)
+### 關鍵設計模式
+- **配置驅動** — 使用 JSON Schema 驗證的 YAML 設定
+- **漸進式分析** — 每個階段建立在先前結果之上
+- **SDK 優先** — Claude Agent SDK 處理自主分析
+- **模組化錯誤處理** — 分類的錯誤與自動重試（每個代理 3 次嘗試）
 
-### Security
-Defensive security tool only. Use only on systems you own or have explicit permission to test.
+### 安全性
+僅限防禦性安全工具。僅在您擁有或已獲得明確許可測試的系統上使用。
 
-## Code Style Guidelines
+## 程式碼風格指南
 
-### Clarity Over Brevity
-- Optimize for readability, not line count — three clear lines beat one dense expression
-- Use descriptive names that convey intent
-- Prefer explicit logic over clever one-liners
+### 清晰度優於簡潔性
+- 針對可讀性進行最佳化，而非行數 — 三行清晰的程式碼勝過一個密集的表達式
+- 使用傳達意圖的描述性名稱
+- 偏好明確的邏輯而非聰明的單行程式碼
 
-### Structure
-- Keep functions focused on a single responsibility
-- Use early returns and guard clauses instead of deep nesting
-- Never use nested ternary operators — use if/else or switch
-- Extract complex conditions into well-named boolean variables
+### 結構
+- 保持函式專注於單一職責
+- 使用提前返回和守衛子句而非深層巢狀
+- 永遠不要使用巢狀三元運算子 — 使用 if/else 或 switch
+- 將複雜條件提取到命名良好的布林變數中
 
-### TypeScript Conventions
-- Use `function` keyword for top-level functions (not arrow functions)
-- Explicit return type annotations on exported/top-level functions
-- Prefer `readonly` for data that shouldn't be mutated
+### TypeScript 慣例
+- 對頂層函式使用 `function` 關鍵字（不是箭頭函式）
+- 在匯出/頂層函式上使用明確的返回類型註解
+- 對不應變更的資料偏好使用 `readonly`
 
-### Avoid
-- Combining multiple concerns into a single function to "save lines"
-- Dense callback chains when sequential logic is clearer
-- Sacrificing readability for DRY — some repetition is fine if clearer
-- Abstractions for one-time operations
+### 避免
+- 將多個關注點組合到單一函式中以「節省行數」
+- 當順序邏輯更清晰時使用密集的回呼鏈
+- 為了 DRY 而犧牲可讀性 — 如果更清晰，一些重複是可以的
+- 為一次性操作進行抽象化
 
-## Key Files
+## 關鍵檔案
 
-**Entry Points:** `src/temporal/workflows.ts`, `src/temporal/activities.ts`, `src/temporal/worker.ts`, `src/temporal/client.ts`
+**入口點：** `src/temporal/workflows.ts`、`src/temporal/activities.ts`、`src/temporal/worker.ts`、`src/temporal/client.ts`
 
-**Core Logic:** `src/session-manager.ts`, `src/ai/claude-executor.ts`, `src/config-parser.ts`, `src/audit/`
+**核心邏輯：** `src/session-manager.ts`、`src/ai/claude-executor.ts`、`src/config-parser.ts`、`src/audit/`
 
-**Config:** `shannon` (CLI), `docker-compose.yml`, `configs/`, `prompts/`
+**配置：** `shannon`（CLI）、`docker-compose.yml`、`configs/`、`prompts/`
 
-## Troubleshooting
+## 疑難排解
 
-- **"Repository not found"** — `REPO` must be a folder name inside `./repos/`, not an absolute path. Clone or symlink your repo there first: `ln -s /path/to/repo ./repos/my-repo`
-- **"Temporal not ready"** — Wait for health check or `docker compose logs temporal`
-- **Worker not processing** — Check `docker compose ps`
-- **Reset state** — `./shannon stop CLEAN=true`
-- **Local apps unreachable** — Use `host.docker.internal` instead of `localhost`
-- **Missing tools** — Use `PIPELINE_TESTING=true` to skip nmap/subfinder/whatweb (graceful degradation)
-- **Container permissions** — On Linux, may need `sudo` for docker commands
+- **「找不到儲存庫」** — `REPO` 必須是 `./repos/` 內的資料夾名稱，不是絕對路徑。首先在那裡複製或符號連結您的儲存庫：`ln -s /path/to/repo ./repos/my-repo`
+- **「Temporal 未就緒」** — 等待健康檢查或 `docker compose logs temporal`
+- **工作者未處理** — 檢查 `docker compose ps`
+- **重設狀態** — `./shannon stop CLEAN=true`
+- **本地應用程式無法存取** — 使用 `host.docker.internal` 而非 `localhost`
+- **缺少工具** — 使用 `PIPELINE_TESTING=true` 跳過 nmap/subfinder/whatweb（優雅降級）
+- **容器權限** — 在 Linux 上，docker 命令可能需要 `sudo`
